@@ -1,16 +1,17 @@
-import sqlalchemy as sqla
+import dataset
+import datetime
 
 
-metadata = sqla.MetaData()
+# create a database and a table
+db = dataset.connect('mysql://root@localhost/kickstarter')
+table = db['campaign_basics']
 
-engine = sqla.create_engine('mysql://root@localhost/kickstarter')
-conn = engine.connect()
+
+def now():
+    return datetime.datetime.now()
 
 
-campaign_basics = sqla.Table(
-    'campaigns', metadata,
-    sqla.Column('user_id', sqla.Integer, primary_key=True),
-    sqla.Column('user_name', sqla.String(16), nullable=False),
-    sqla.Column('email_address', sqla.String(60), key='email'),
-    sqla.Column('password', sqla.String(20), nullable=False)
-)
+# insert time-stamped campaign info into the database
+def insert_campaign(campaign_info):
+    campaign_info['date_observed'] = now()
+    table.insert(campaign_info)
